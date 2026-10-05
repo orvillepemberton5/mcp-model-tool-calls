@@ -1,0 +1,8 @@
+# GPT-6 Sol — Argolink
+
+- Model: gpt-6-sol
+- Intent: MCP tool calls over the Argolink Responses API
+- Model page: https://argolink.io/gh-mcp-model-tool-calls
+- API docs: https://argolink.io/gh-unified-api-docs
+- Examples: examples/request.sh, examples/client.py
+- Contract: docs/model-contract.md
