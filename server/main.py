@@ -49,7 +49,7 @@ def _request_json(path: str, body: dict[str, Any] | None = None) -> dict[str, An
 
 
 @mcp.tool()
-def ask_model(prompt: str, model: str = "gpt-5.4", reasoning_effort: str | None = None) -> dict[str, Any]:
+def ask_model(prompt: str, model: str = "glm-5.3", reasoning_effort: str | None = None) -> dict[str, Any]:
     """Ask a verified text model one question through Chat Completions."""
     body: dict[str, Any] = {"model": model, "messages": [{"role": "user", "content": _validate_prompt(prompt)}]}
     if reasoning_effort is not None:

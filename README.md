@@ -20,7 +20,7 @@ Configure an MCP host using its current JSON/settings surface. The command shoul
 
 ## Tool contract
 
-### `ask_model(prompt, model="gpt-5.4", reasoning_effort=None)`
+### `ask_model(prompt, model="glm-5.3", reasoning_effort=None)`
 
 Sends `POST /v1/chat/completions` with one user message. The prompt is non-empty and capped at 20,000 characters. `reasoning_effort` is accepted only from `none`, `low`, `medium`, `high`, `xhigh`, and `max`; whether a model supports an option comes from the live catalog. The return keeps the request ID, model, text, and usage so a host can display or record them.
 
@@ -36,7 +36,7 @@ Every request uses `MODEL_BASE_URL`, `MODEL_API_KEY`, a 60-second timeout, and t
 
 ## Current catalog boundary
 
-At the 2026-10-07 check, `gpt-5.4` was a Responses model, while `glm-5.3`, `glm-5.2`, and the two DeepSeek V4 entries were Chat Completions models. The default `ask_model` value is therefore a convenience only: if the live catalog does not list Chat Completions for `gpt-5.4`, select a compatible model and use a Responses-specific tool server. Use [GET /v1/models](https://argolink.io/v1/models), [model pages](https://argolink.io/en/models), and the API [docs](https://argolink.io/en/docs) as the sources of truth.
+At the 2026-10-07 check, `gpt-5.4` was a Responses model, while `glm-5.3`, `glm-5.2`, and the two DeepSeek V4 entries were Chat Completions models. The default `ask_model` value is `glm-5.3` because it matches this server's route. If the live catalog changes, select a compatible Chat Completions model or use a Responses-specific tool server. Use [GET /v1/models](https://argolink.io/v1/models), [model pages](https://argolink.io/en/models), and the API [docs](https://argolink.io/en/docs) as the sources of truth.
 
 ## Host safety
 
