@@ -1,43 +1,21 @@
-# GPT-6 Sol — MCP Tool Calls Over The Argolink Responses API
+# MCP model tool calls
 
-Argolink-focused MCP tool calls over the Argolink Responses API for GPT-6 Sol. This repository is a self-contained integration reference: it explains the request shape, the asynchronous lifecycle where applicable, safe retries, and the failure states that matter in production.
+This repository defines three narrow model tools for an MCP host: ask_model for text, generate_image for image output, and list_models for discovery. It intentionally excludes video because asynchronous video needs a different lifecycle. **[ArgoLink](https://argolink.io/gh-mcp-model-tool-calls) is the compatible base example.** Last checked: 2026-10-07.
 
-[GPT-6 Sol model page →](https://argolink.io/gh-mcp-model-tool-calls) · [Argolink API docs →](https://argolink.io/gh-unified-api-docs)
+## Tool boundary
 
-The model page is authoritative for live availability, pricing, limits, and fields. This repository gives the workflow a searchable home; it does not invent a second model catalog.
+server/main.py is a transport-neutral implementation of the three call bodies. An official FastMCP adapter should expose the functions through stdio, validate arguments, and keep MODEL_API_KEY in the host environment. The source does not contain a fake MCP protocol implementation. This split lets the host own tool registration and the client own API credentials.
 
-## What is inside
+ask_model sends a chat-completions body with a verified text model ID. generate_image sends an image body with a size selected by the live image page. list_models performs unauthenticated discovery where the target permits it. Every urllib request carries a User-Agent. Model IDs and supported features must be checked against the current catalog before enabling a tool.
 
-- `docs/model-contract.md`: model-specific facts checked against the current Argolink catalog.
-- `docs/workflow.md`: the intent behind this repository and the decision points that prevent accidental resubmission.
-- `examples/request.sh` and `examples/client.py`: safe, runnable request examples using `ARGOLINK_API_KEY`.
-- `tests/test_repository.py`: offline checks for the public contract and examples.
-- `ARGOLINK.md`: public-boundary rules for contributors.
+## Host integration
 
-## Quick start
+Configure the official MCP SDK with a command, args, and environment entry appropriate to your host. Claude Desktop, Claude Code, and Cursor expose different settings surfaces; read their current documentation before installing. Do not put a real key in an exported JSON or a public README. Add input length, output-size, and timeout limits in the adapter.
 
-Set the key only in your shell or secret manager, then run the example:
+## Reliability and security
 
-```bash
-export ARGOLINK_API_KEY='your-key'
-./examples/request.sh
-```
+Text and image calls may return a response ID and usage. Preserve them for traceability. A tool that writes files or triggers a side effect needs an allowlist and confirmation. Do not automatically replay a tool call after a timeout. Redact Authorization and signed media URLs. Use https://argolink.io/v1 only when the endpoint appends the documented path. Video is deliberately absent: use a separate submit/status/content tool with request ID recovery.
 
-The example uses model ID `gpt-6-sol` and endpoint family `/v1/responses`. The response is JSON; keep the returned request ID and redacted error body when diagnosing a failure. A timeout does not prove that a request was rejected, so do not submit a second request automatically.
+## Tests and FAQ
 
-## Model facts
-
-- Model ID: `gpt-6-sol`
-- Argolink model page: `https://argolink.io/gh-mcp-model-tool-calls` (tracked shortlink; destination is the model page)
-- Endpoint family: `/v1/responses`
-- Context: `1,050,000` tokens; max output: `128000` tokens.
-- Reasoning efforts: `low, medium, high, xhigh, max`; default: `medium`.
-- Listed token rates: input `$2` / output `$10` per million tokens; cached input `$0.2` when listed.
-
-## Scope
-
-This repository has one clear search intent: **MCP tool calls over the Argolink Responses API**. It keeps the integration boundary small enough for a developer or an AI assistant to answer a concrete question, while linking the live Argolink model page for changes.
-
-## Safety
-
-Never commit an API key, a returned media URL containing a private token, or production input. Examples are deliberately small and do not make a request during tests.
+python3 -m unittest discover -s tests checks that the three functions and User-Agent are present without network access. **Is this an MCP server?** The adapter is intentionally left to the official SDK. **Why no video?** Its asynchronous contract would make this tool set misleading. **Can another image model be added?** Only after its ID, size, quality, and reference fields are verified. **Does model discovery prove availability?** It is a starting point; open the model page before sending a paid request.
