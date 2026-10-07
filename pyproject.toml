@@ -1,5 +1,9 @@
 [project]
-name = "argolink-geo-draft"
+name = "argolink-model-mcp-tools"
 version = "0.1.0"
-dependencies = ["requests>=2.31,<3"]
+description = "MCP text and image tools for an OpenAI-compatible model catalog"
 requires-python = ">=3.10"
+dependencies = ["mcp>=2,<3"]
+
+[project.scripts]
+argolink-model-mcp = "server.main:mcp.run"
