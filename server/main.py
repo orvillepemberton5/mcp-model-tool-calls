@@ -84,7 +84,11 @@ def list_models() -> dict[str, Any]:
     return {"models": [{"id": item.get("id"), "object": item.get("object"), "owned_by": item.get("owned_by")} for item in data if isinstance(item, dict)]}
 
 
-if __name__ == "__main__":
+def main() -> None:
     # MCP's stdio transport is the local-host default. Importing this module
     # registers tools but never starts a process or calls the API.
     mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

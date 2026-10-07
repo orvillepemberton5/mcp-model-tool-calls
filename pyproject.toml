@@ -6,4 +6,4 @@ requires-python = ">=3.10"
 dependencies = ["mcp>=2,<3"]
 
 [project.scripts]
-argolink-model-mcp = "server.main:mcp.run"
+argolink-model-mcp = "server.main:main"
